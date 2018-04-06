@@ -133,9 +133,9 @@ camera.resolution = (3280, 2464)
 
 
 now = datetime.datetime.now()
-today10pm = now.replace(hour = 22, minute=0, second=0,microsecond=0)
+today10pm = now.replace(hour = 19, minute=0, second=0,microsecond=0)
 lastCaptured = now
-captureRate = 3*60
+captureRate = 2*60
 
 numUploaded = 0
 dayString = now.strftime("%b-%d-%a")
@@ -168,11 +168,10 @@ while(True):
         
         room_vector = list(map(partial(predict_occupancy,graph), normalized_images))
         
-
         room_vec_file = os.path.join(uploadPath, "cap_{:03d}.txt".format(numUploaded))
         
         with open(room_vec_file, 'w+') as room_txt:
-            room_txt.write(''.join(room_vector))
+            room_txt.write(''.join([str(vec) for vec in room_vector]))
 
         numUploaded += 1
 
