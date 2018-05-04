@@ -13,9 +13,8 @@ from functools import partial
 
 import time
 import io
-import socket
 
-import image_process
+import image_process as img_ps
 
 def predict_occupancy(graph,img):
     # Load the image as a half-precision floating point array
@@ -28,7 +27,7 @@ def predict_occupancy(graph,img):
 
 HOME_PATH               = '/home/pi/occupancy_detection'
 GRAPH_PATH              = HOME_PATH + '/data/graph' 
-ilsvrc_mean = numpy.load(HOME_PATH + '/data/image_mean.npy').mean(1).mean(1) 
+mean_img = numpy.load(HOME_PATH + '/data/image_mean.npy').mean(1).mean(1) 
 output_path = sys.argv[1]
 
 # Look for enumerated NCS device(s); quit program if none found.
@@ -48,6 +47,7 @@ with open( GRAPH_PATH, mode='rb' ) as f:
 # Load the graph buffer into the NCS
 graph = device.AllocateGraph( blob )
 
+print("Setting up camera...")
 camera = PiCamera()
 time.sleep(0.2)
 stream = io.BytesIO()
@@ -56,11 +56,13 @@ camera.resolution = (3280, 2464)
 now = datetime.datetime.now()
 today10pm = now.replace(hour = 19, minute=0, second=0,microsecond=0)
 lastCaptured = now
-captureRate = 2*60
+captureRate = 5
 
 numUploaded = 0
 dayString = now.strftime("%b-%d-%a")
 uploadPath = os.path.join(output_path, dayString)
+
+print("Creating upload path {}".format(uploadPath))
 
 try:
     os.makedirs(uploadPath)
@@ -73,20 +75,24 @@ while(True):
     if timestamp > today10pm:
         sys.exit(0)
     if (timestamp - lastCaptured).seconds >= captureRate:
+        print("Capturing Image...")
         lastCapured = timestamp
         camera.capture(stream, format="jpeg")
         data = numpy.fromstring(stream.getvalue(),dtype=numpy.uint8)
         image = cv2.imdecode(data,1)
 
-        image = crop_image(image)
+        image = img_ps.crop_image(image)
 
         filePath = os.path.join(uploadPath, "cap_{:03d}.jpg".format(numUploaded))
-        cv2.imwrite(filePath, image)
 
-        divided_images = split_to_five(image)
-        
-        normalized_images = list(map(normalize_img, divided_images))
-        
+        divided_images = img_ps.split_to_five(image)
+
+        cv2.imwrite(filePath, divided_images[1])
+
+        normalize_img_with_mean=partial(img_ps.normalize_img, mean_img=mean_img)
+
+        normalized_images = list(map(normalize_img_with_mean, divided_images))
+ 
         room_vector = list(map(partial(predict_occupancy,graph), normalized_images))
         
         room_vec_file = os.path.join(uploadPath, "cap_{:03d}.txt".format(numUploaded))
