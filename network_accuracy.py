@@ -54,7 +54,7 @@ stream = io.BytesIO()
 camera.resolution = (3280, 2464)
 
 now = datetime.datetime.now()
-today10pm = now.replace(hour = 19, minute=0, second=0,microsecond=0)
+endTime = now.replace(hour = 19, minute=0, second=0,microsecond=0)
 lastCaptured = now
 captureRate = 5
 
@@ -72,7 +72,7 @@ except OSError:
 
 while(True):
     timestamp = datetime.datetime.now()
-    if timestamp > today10pm:
+    if timestamp > endTime:
         sys.exit(0)
     if (timestamp - lastCaptured).seconds >= captureRate:
         print("Capturing Image...")
