@@ -84,10 +84,9 @@ while(True):
         image = img_ps.crop_image(image)
 
         filePath = os.path.join(uploadPath, "cap_{:03d}.jpg".format(numUploaded))
-
+        cv2.imwrite(filePath, image)
+	
         divided_images = img_ps.split_to_five(image)
-
-        cv2.imwrite(filePath, divided_images[1])
 
         normalize_img_with_mean=partial(img_ps.normalize_img, mean_img=mean_img)
 
