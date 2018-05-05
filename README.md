@@ -12,11 +12,11 @@ ___
 
 [convert_mean.py](https://github.com/sashaDoubov/MovidiusRoomOccupancy/blob/master/convert_mean.py):  
 Converts Caffe's binaryproto files used for the mean image into the npy format, which can be used by the Movidius API.  
-*Usage*: Modify the hardcoded path for the mean binaryproto file within the program, and run the script (no args) to generate a local *image_mean.npy* file.
+*Usage*: Modify the hardcoded path for the mean binaryproto file within the program, and run the script (no args) to generate a local `image_mean.npy` file.
 
 [image_process.py](https://github.com/sashaDoubov/MovidiusRoomOccupancy/blob/master/image_process.py):  
 Consists of image processing functions similar to those used in training of the Caffe Classification network. Note that the network requires a 227x227 image due to the constraints of transfer learning, and so the `transform_img` function is used for resizing the images and providing the necessary padding to the image.  
-*Usage*: Should be used as a library, see *network_accuracy.py* and *occupancy_server.py* for example usages of the functions.
+*Usage*: Should be used as a library, see `network_accuracy.py` and `occupancy_server.py` for example usages of the functions.
 
 [network_accuracy.py](https://github.com/sashaDoubov/MovidiusRoomOccupancy/blob/master/network_accuracy.py):  
 Used to assess the accuracy of the CNN's predictions. Saves a captured image and its predicted occupancy label, which can then be validated manually to see the true accuracy of the network.  
@@ -26,7 +26,7 @@ Used to assess the accuracy of the CNN's predictions. Saves a captured image and
 * `endTime` is the time at which the script will end on the current day, which is useful if the script is launched automatically on a daily basis (with a cronjob)
 
 [occupancy_server.py](https://github.com/sashaDoubov/MovidiusRoomOccupancy/blob/master/occupancy_server.py):  
-Sends the predicted occupancy of the room as a binary vector. 
+Sends the predicted occupancy of the room as a binary vector.   
 *Usage*: As with `network_accuracy.py`, necessary paths should be modified in the script. By default, the occupancy server broadcasts an occupancy vector over port `1234` upon receiving a `Read` message (case-sensitive) from the client. Thus the client should connect to the Raspberry Pi's IP address and broadcast a `Read` message when a prediction is desired. No command-line arguments are required when running the script.
    
 
