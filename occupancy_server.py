@@ -57,7 +57,7 @@ camera.resolution = (3280, 2464)
 now = datetime.datetime.now()
 today10pm = now.replace(hour = 22, minute=0, second=0,microsecond=0)
 lastCaptured = now
-captureRate = 15
+captureRate = 5
 
 # NETWORKING DETAILS
 server = socket.socket(socket.AF_INET, socket.SOCK_STREAM) #IP-4 address
@@ -84,9 +84,12 @@ while(True):
 
     if timestamp > today10pm:
         sys.exit(0)
-    if (timestamp - lastCaptured).seconds >= captureRate:
+    data = client.recv(1024)
+    print("Received {} from the client".format(data))
+    
+    if data.decode() == "Read":
         lastCapured = timestamp
-        print("CAPTURING IMAGE: ")
+        print("CAPTURING IMAGE")
         camera.capture(stream, format="jpeg")
         data = numpy.fromstring(stream.getvalue(),dtype=numpy.uint8)
         image = cv2.imdecode(data,1)
@@ -103,7 +106,7 @@ while(True):
         # Returning a vector of the predicted room occupancy
         room_vector = list(map(partial(predict_occupancy,graph), normalized_images))
 
-        message = str(room_vector)
+        message = " ".join(map(str,room_vector))
 
         client.sendto(message.encode('utf-8'), address)
 
