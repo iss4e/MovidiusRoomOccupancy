@@ -27,6 +27,6 @@ Used to assess the accuracy of the CNN's predictions. Saves a captured image and
 
 [occupancy_server.py](https://github.com/sashaDoubov/MovidiusRoomOccupancy/blob/master/occupancy_server.py):  
 Sends the predicted occupancy of the room as a binary vector.   
-*Usage*: As with `network_accuracy.py`, necessary paths should be modified in the script. By default, the occupancy server broadcasts an occupancy vector over port `1234` upon receiving a `Read` message (case-sensitive) from the client. Thus the client should connect to the Raspberry Pi's IP address and broadcast a `Read` message when a prediction is desired. No command-line arguments are required when running the script.
+*Usage*: As with `network_accuracy.py`, necessary paths should be modified in the script. By default, the occupancy server broadcasts an occupancy vector over port `1234` upon receiving a "Read" message (case-sensitive) from the client. Thus the client should connect to the Raspberry Pi's IP address and broadcast a "Read" message when a prediction is desired. No command-line arguments are required when running the script.
    
 
